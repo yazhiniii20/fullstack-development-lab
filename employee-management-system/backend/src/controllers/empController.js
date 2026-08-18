@@ -63,4 +63,55 @@ const createEmployee = async(req,res) => {
     }
 };
 
-module.exports = {getEmployees,getEmployeesById,createEmployee};
+const updateEmployee = async(req,res) => {
+      try{
+          const {id} = req.params;
+          const {name,email,phone,salary,designation,department,joiningDate} = req.body;
+          const employee = await Employee.findById({_id : id});
+          if(employee){
+              if(name !== undefined) employee.name = name;
+              if(email !== undefined) employee.email = email;
+              if(phone !== undefined) employee.phone = phone;
+              if(salary !== undefined) employee.salary = salary;
+              if(designation !== undefined) employee.designation = designation;
+              if(department !== undefined) employee.department = department;
+              if(joiningDate !== undefined) employee.joiningDate = joiningDate;
+              const updatedEmployee = await employee.save();
+              return res.status(200).json({
+                message : "Employee updated successfully",
+                updatedEmployee
+              });
+          }else{
+            return res.status(404).json({
+               message : "Employee does not exist"
+            });
+          }
+      }catch(error){
+         console.log(error);
+         return res.status(500).json({
+           message : "Internal Server Error"
+         });
+      }
+};
+
+const deleteEmployee = async(req,res) => {
+    try{
+        const {id} = req.params;
+        const employee = await Employee.findByIdAndDelete({_id : id});
+        if(employee){
+          return res.status(200).json({
+            message : "Employee deleted successfully"
+          });
+        }
+        return res.status(404).json({
+          message : "Employee not found"
+        });
+    }catch(error){
+      console.log(error);
+      return res.status(500).json({
+        message : "Internal Server Error"
+      });
+    }
+};
+
+module.exports = {getEmployees,getEmployeesById,createEmployee,updateEmployee,deleteEmployee};
