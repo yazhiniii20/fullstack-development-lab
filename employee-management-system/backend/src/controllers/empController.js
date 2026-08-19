@@ -44,6 +44,11 @@ const createEmployee = async(req,res) => {
           message : "All fields are required"
          });
        }
+       if(salary < 0 || phone.length != 10){
+         return res.status(400).json({
+          message : "Invalid input"
+         });
+       }
        const existingEmail = await Employee.findOne({email});
        if(existingEmail){
          return res.status(409).json({
@@ -67,7 +72,7 @@ const updateEmployee = async(req,res) => {
       try{
           const {id} = req.params;
           const {name,email,phone,salary,designation,department,joiningDate} = req.body;
-          const employee = await Employee.findById({_id : id});
+          const employee = await Employee.findById(id);
           if(employee){
               if(name !== undefined) employee.name = name;
               if(email !== undefined) employee.email = email;
@@ -97,7 +102,7 @@ const updateEmployee = async(req,res) => {
 const deleteEmployee = async(req,res) => {
     try{
         const {id} = req.params;
-        const employee = await Employee.findByIdAndDelete({_id : id});
+        const employee = await Employee.findByIdAndDelete(id);
         if(employee){
           return res.status(200).json({
             message : "Employee deleted successfully"
